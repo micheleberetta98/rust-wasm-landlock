@@ -45,7 +45,7 @@ const ACCESS_FS_ROUGHLY_WRITE: u64 = 2 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 |
 fn parse_flag(s: &str) -> Result<u64> {
   // Placholder instead of the true landlock flags
   match s {
-    "all" => Ok(ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE),
+    "*" => Ok(ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE),
     "~read" => Ok(ACCESS_FS_ROUGHLY_READ),
     "~write" => Ok(ACCESS_FS_ROUGHLY_WRITE),
     "X" => Ok(1),         // execute
