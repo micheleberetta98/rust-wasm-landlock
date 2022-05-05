@@ -3,6 +3,7 @@ use landlock::{
     make_bitflags, Access, AccessFs, BitFlags, PathBeneath, PathFd, PathFdError, Ruleset,
     RulesetError, RulesetStatus, ABI,
 };
+use std::env;
 use std::ffi::OsStr;
 use std::fs;
 use std::os::unix::ffi::OsStrExt;
@@ -10,6 +11,8 @@ use thiserror::Error;
 use wasmtime::*;
 use wasmtime_wasi::sync::WasiCtxBuilder;
 use wasmtime_wasi::Dir;
+
+use clap::Parser;
 
 const ACCESS_FS_ROUGHLY_READ: BitFlags<AccessFs> = make_bitflags!(AccessFs::{ ReadFile | ReadDir });
 
@@ -53,17 +56,30 @@ impl PathEnv {
     }
 }
 
-fn main() -> Result<()> {
-    let status = Ruleset::new()
-        .handle_access(AccessFs::from_all(ABI::V1))?
-        .create()?
-        .add_rules(PathEnv::new("tmp-dir", ACCESS_FS_ROUGHLY_READ)?.iter())?
-        .restrict_self()
-        .expect("Failed to enforce ruleset");
+#[derive(Parser, Debug)]
+#[clap(author, version, about, long_about = None)]
+struct Args {
+    #[clap(short, long)]
+    name: String,
+    #[clap(short, long, default_value_t = 1)]
+    count: u8,
+}
 
-    if status.ruleset == RulesetStatus::NotEnforced {
-        bail!("Landlock is not supported by the running kernel.");
+fn main() -> Result<()> {
+    let args = Args::parse();
+    for _ in 0..args.count {
+        println!("Hello {}!", args.name);
     }
+    // let status = Ruleset::new()
+    //     .handle_access(AccessFs::from_all(ABI::V1))?
+    //     .create()?
+    //     .add_rules(PathEnv::new("tmp-dir", ACCESS_FS_ROUGHLY_READ)?.iter())?
+    //     .restrict_self()
+    //     .expect("Failed to enforce ruleset");
+
+    // if status.ruleset == RulesetStatus::NotEnforced {
+    //     bail!("Landlock is not supported by the running kernel.");
+    // }
 
     // Reading works ok
     // let content =
@@ -74,10 +90,10 @@ fn main() -> Result<()> {
     // touch(Path::new("hello.txt"))?;
 
     // Try and read some files
-    run_wasi("./tmp-dir", "./tmp-dir/read-file.wasm")?;
+    // run_wasi("./tmp-dir", "./tmp-dir/read-file.wasm")?;
 
     // Try and create some files
-    run_wasi("./tmp-dir", "./tmp-dir/touch-file.wasm")?;
+    // run_wasi("./tmp-dir", "./tmp-dir/touch-file.wasm")?;
 
     Ok(())
 }
