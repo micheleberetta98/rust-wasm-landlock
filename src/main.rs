@@ -12,8 +12,8 @@ use crate::path_access::PathAccess;
 
 fn main() -> Result<()> {
     let args = get_args();
+    println!("Preopened dir: {}", args.dir);
     for (path, access) in args.fs_allows {
-        println!("{} has {}", path, access);
         let landlock_path_access = PathAccess::new(&path, access);
         println!("{:?}", landlock_path_access)
     }
