@@ -4,10 +4,10 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum PathEnvError {
-    #[error(transparent)]
-    Ruleset(#[from] RulesetError),
-    #[error(transparent)]
-    AddRuleIter(#[from] PathFdError),
+  #[error(transparent)]
+  Ruleset(#[from] RulesetError),
+  #[error(transparent)]
+  AddRuleIter(#[from] PathFdError),
 }
 
 // A struct able to iterate landlock's PathBeneath rules
@@ -26,20 +26,20 @@ impl PathAccess {
   }
 
   pub fn from_tuple(tuple: (&str, BitFlags<AccessFs>)) -> Self {
-      let (path, access) = tuple;
-      PathAccess::new(path, access)
+    let (path, access) = tuple;
+    PathAccess::new(path, access)
   }
 
   pub fn iter(&self) -> impl Iterator<Item = Result<PathBeneath<PathFd>, PathEnvError>> + '_ {
     self.paths
-        .split(':')
-        .skip_while(|s| s.is_empty())
-        .map(move |path| to_path_beneath(path, self.access))
+      .split(':')
+      .skip_while(|s| s.is_empty())
+      .map(move |path| to_path_beneath(path, self.access))
   }
 }
 
 fn to_path_beneath(path: &str, access: BitFlags<AccessFs>) -> Result<PathBeneath<PathFd>, PathEnvError> {
-    let path_fd = PathFd::new(path)?;
-    let path_beneath = PathBeneath::new(path_fd).allow_access(access);
-    Ok(path_beneath)
+  let path_fd = PathFd::new(path)?;
+  let path_beneath = PathBeneath::new(path_fd).allow_access(access);
+  Ok(path_beneath)
 }

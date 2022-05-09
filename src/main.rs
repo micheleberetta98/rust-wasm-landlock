@@ -1,9 +1,6 @@
 use anyhow::{Result};
-use std::fs;
-use wasmtime::*;
-use wasmtime_wasi::sync::WasiCtxBuilder;
-use wasmtime_wasi::Dir;
 
+mod wasi;
 mod args;
 mod path_access;
 
@@ -11,13 +8,13 @@ use crate::args::get_args;
 use crate::path_access::PathAccess;
 
 fn main() -> Result<()> {
-    let args = get_args();
-    println!("Preopened dir: {}", args.dir);
-    for (path, access) in args.fs_allows {
-        let landlock_path_access = PathAccess::new(&path, access);
-        println!("{:?}", landlock_path_access)
-    }
-    Ok(())
+  let args = get_args();
+  println!("Preopened dir: {}", args.dir);
+  for (path, access) in args.fs_allows {
+    let landlock_path_access = PathAccess::new(&path, access);
+    println!("{:?}", landlock_path_access)
+  }
+  Ok(())
 }
 
 /* fn run_wasi(dir: &str, path: &str) -> Result<()> {

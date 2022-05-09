@@ -37,20 +37,20 @@ fn parse_flag_str(s: &str) -> Result<(String, BitFlags<AccessFs>)> {
 
 // roughly read = execute + read file + read dir
 const ACCESS_FS_ROUGHLY_READ: BitFlags<AccessFs> =
-    make_bitflags!(AccessFs::{Execute | ReadFile | ReadDir});
+  make_bitflags!(AccessFs::{Execute | ReadFile | ReadDir});
 // roughly write = write file, remove dir/file, all the makes
 const ACCESS_FS_ROUGHLY_WRITE: BitFlags<AccessFs> =
-    make_bitflags!(AccessFs::{
-        WriteFile | RemoveDir | RemoveFile | MakeChar | MakeDir | MakeReg | MakeSock
-        | MakeFifo | MakeBlock | MakeSym});
+  make_bitflags!(AccessFs::{
+    WriteFile | RemoveDir | RemoveFile | MakeChar | MakeDir | MakeReg | MakeSock
+    | MakeFifo | MakeBlock | MakeSym});
 
 fn parse_flag(s: &str) -> Result<BitFlags<AccessFs>> {
-    match s {
-        "*" => Ok(BitFlags::all()),
-        "~read" => Ok(ACCESS_FS_ROUGHLY_READ),
-        "~write" => Ok(ACCESS_FS_ROUGHLY_WRITE),
-        _ => parse_single_flag(s).map(BitFlags::from),
-    }
+  match s {
+    "*" => Ok(BitFlags::all()),
+    "~read" => Ok(ACCESS_FS_ROUGHLY_READ),
+    "~write" => Ok(ACCESS_FS_ROUGHLY_WRITE),
+    _ => parse_single_flag(s).map(BitFlags::from),
+  }
 }
 
 fn parse_single_flag(s: &str) -> Result<AccessFs> {
