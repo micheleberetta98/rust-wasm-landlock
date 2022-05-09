@@ -6,6 +6,7 @@ use clap::Parser;
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 pub struct Args {
+  pub wasm_module: String,
   // The preopepend dir to pass to wasmtime
   #[clap(long, short)]
   pub dir: String,

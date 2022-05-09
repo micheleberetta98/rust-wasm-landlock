@@ -4,7 +4,7 @@ use wasmtime::*;
 use wasmtime_wasi::sync::WasiCtxBuilder;
 use wasmtime_wasi::Dir;
 
-pub fn run_wasi(dir: &str, path: &str) -> Result<()> {
+pub fn run(module_path: &str, dir: &str) -> Result<()> {
   let engine = Engine::default();
   let mut linker = Linker::new(&engine);
   wasmtime_wasi::add_to_linker(&mut linker, |s| s)?;
@@ -21,7 +21,7 @@ pub fn run_wasi(dir: &str, path: &str) -> Result<()> {
   let mut store = Store::new(&engine, wasi);
 
   // Try and read some files
-  let module = Module::from_file(&engine, path)?;
+  let module = Module::from_file(&engine, module_path)?;
   linker.module(&mut store, "", &module)?;
   linker
     .get_default(&mut store, "")?
