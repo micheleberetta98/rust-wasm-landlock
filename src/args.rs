@@ -9,7 +9,7 @@ pub struct Args {
   pub wasm_module: String,
   // The preopepend dir to pass to wasmtime
   #[clap(long, short)]
-  pub dir: String,
+  pub dir: Option<String>,
   // A list of the allowed privileges on a particular folder/file
   #[clap(long = "fs-allow", number_of_values = 1, value_name = "PATH:FLAGS", parse(try_from_str = parse_flag_str))]
   pub fs_allows: Vec<(String, BitFlags<AccessFs>)>,
