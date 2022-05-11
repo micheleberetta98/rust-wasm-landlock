@@ -2,7 +2,6 @@ use crate::args::get_args;
 use crate::path_access::PathAccess;
 use crate::wasi::WasmModule;
 use anyhow::Result;
-use wasmtime_wasi::{Dir, WasiCtxBuilder};
 
 mod args;
 mod landlock;
@@ -24,14 +23,13 @@ fn main() -> Result<()> {
   let status = ruleset.restrict_self()?;
   landlock::guard_is_supported(status)?;
 
-  let mut wasi = WasiCtxBuilder::new().inherit_stdio().inherit_args()?;
+  let mut wasm = WasmModule::new(&args.wasm_module).use_stdio();
+
   if let Some(dir) = args.dir {
-    let fd = std::fs::File::open(dir)?;
-    wasi = wasi.preopened_dir(Dir::from_std_file(fd), ".")?;
+    wasm = wasm.preopen(&dir, ".")?;
   }
 
-  let ctx = wasi.build();
-  WasmModule::new(&args.wasm_module).run(ctx)?;
+  wasm.run()?;
 
   Ok(())
 }
