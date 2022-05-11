@@ -13,7 +13,8 @@ fn main() -> Result<()> {
   let mut ruleset = landlock::create_ruleset()?;
 
   println!("WASM module to run: {}", args.wasm_module);
-  println!("Preopened dir: {:?}", args.dir);
+  println!("Preopened dirs: {:?}", args.dirs);
+  println!("Mapped dirs:    {:?}", args.mapdirs);
 
   for (path, access) in args.fs_allows {
     let pa = PathAccess::new(&path, access);
@@ -23,13 +24,11 @@ fn main() -> Result<()> {
   let status = ruleset.restrict_self()?;
   landlock::guard_is_supported(status)?;
 
-  let mut wasm = WasmModule::new(&args.wasm_module).use_stdio();
-
-  if let Some(dir) = args.dir {
-    wasm = wasm.preopen(&dir, ".")?;
-  }
-
-  wasm.run()?;
+  WasmModule::new(&args.wasm_module)
+    .use_stdio()
+    .preopen_all(args.dirs)?
+    .preopen_all_map(args.mapdirs)?
+    .run()?;
 
   Ok(())
 }
