@@ -1,4 +1,5 @@
-use crate::args::get_args;
+use crate::args::{get_args, Args};
+use crate::landlock::Landlock;
 use crate::path_access::PathAccess;
 use crate::wasi::WasmModule;
 use anyhow::Result;
@@ -10,19 +11,14 @@ mod wasi;
 
 fn main() -> Result<()> {
   let args = get_args();
-  let mut ruleset = landlock::create_ruleset()?;
 
   println!("WASM module to run: {}", args.wasm_module);
   println!("Preopened dirs: {:?}", args.dirs);
   println!("Mapped dirs:    {:?}", args.mapdirs);
 
-  for (path, access) in args.fs_allows {
-    let pa = PathAccess::new(&path, access);
-    ruleset = ruleset.add_rules(pa.iter())?;
-  }
-
-  let status = ruleset.restrict_self()?;
-  landlock::guard_is_supported(status)?;
+  Landlock::new()?
+    .add_rules(get_all_allows(&args))?
+    .enforce()?;
 
   WasmModule::new(&args.wasm_module)
     .use_stdio()
@@ -31,4 +27,12 @@ fn main() -> Result<()> {
     .run()?;
 
   Ok(())
+}
+
+fn get_all_allows(args: &Args) -> Vec<PathAccess> {
+  args
+    .fs_allows
+    .iter()
+    .map(|(p, a)| PathAccess::new(p, *a))
+    .collect()
 }
