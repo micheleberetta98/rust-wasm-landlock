@@ -56,10 +56,9 @@ fn parse_flag_str(s: &str) -> Result<(String, BitFlags<AccessFs>)> {
   Ok((path, flags))
 }
 
-// roughly read = execute + read file + read dir
 const ACCESS_FS_ROUGHLY_READ: BitFlags<AccessFs> =
   make_bitflags!(AccessFs::{Execute | ReadFile | ReadDir});
-// roughly write = write file, remove dir/file, all the makes
+
 const ACCESS_FS_ROUGHLY_WRITE: BitFlags<AccessFs> = make_bitflags!(AccessFs::{
     WriteFile | RemoveDir | RemoveFile | MakeChar | MakeDir | MakeReg | MakeSock
     | MakeFifo | MakeBlock | MakeSym});
@@ -76,19 +75,19 @@ fn parse_flag(s: &str) -> Result<BitFlags<AccessFs>> {
 fn parse_single_flag(s: &str) -> Result<AccessFs> {
   // Placholder instead of the true landlock flags
   let f = match s {
-    "X" => Execute,        // execute
-    "W" => WriteFile,      // write file
-    "R" => ReadFile,       // read file
-    "RDir" => ReadDir,     // read dir
-    "DDir" => RemoveDir,   // delete dir
-    "D" => RemoveFile,     // delete file
-    "MChar" => MakeChar,   // make char
-    "MDir" => MakeDir,     // make dir
-    "MReg" => MakeReg,     // make reg
-    "MSock" => MakeSock,   // make sock
-    "MFifo" => MakeFifo,   // make fifo
-    "MBlock" => MakeBlock, // make block
-    "MSym" => MakeSym,     // make symlink
+    "X" => Execute,
+    "W" => WriteFile,
+    "R" => ReadFile,
+    "RDir" => ReadDir,
+    "DDir" => RemoveDir,
+    "D" => RemoveFile,
+    "MChar" => MakeChar,
+    "MDir" => MakeDir,
+    "MReg" => MakeReg,
+    "MSock" => MakeSock,
+    "MFifo" => MakeFifo,
+    "MBlock" => MakeBlock,
+    "MSym" => MakeSym,
     _ => bail!(format!("invalid flag provided: {}", s)),
   };
 
