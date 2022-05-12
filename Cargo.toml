@@ -1,5 +1,5 @@
 [package]
-name = "rust-landlock"
+name = "rust-wasm-landlock"
 version = "0.1.0"
 edition = "2021"
 
