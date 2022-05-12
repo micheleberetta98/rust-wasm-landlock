@@ -1,13 +1,13 @@
 use crate::args::{get_args, Args};
 use crate::landlock::Landlock;
 use crate::path_access::PathAccess;
-use crate::wasi::WasmModule;
+use crate::wasm::WasmModule;
 use anyhow::Result;
 
 mod args;
 mod landlock;
 mod path_access;
-mod wasi;
+mod wasm;
 
 fn main() -> Result<()> {
   let args = get_args();
