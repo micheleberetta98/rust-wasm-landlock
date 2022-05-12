@@ -16,17 +16,20 @@ fn main() -> Result<()> {
   println!("Preopened dirs: {:?}", args.dirs);
   println!("Mapped dirs:    {:?}", args.mapdirs);
 
+  // Read before enforcing landlock, otherwise we have to specify read permissions
+  // for the executable folder too
+  let module = WasmModule::new(&args.wasm_module)?
+    .use_stdio()
+    .preopen_all(&args.dirs)?
+    .preopen_all_map(&args.mapdirs)?;
+
+  // Enforce landlock
   Landlock::new()?
     .add_rules(get_all_allows(&args))?
     .enforce()?;
 
-  WasmModule::new(&args.wasm_module)
-    .use_stdio()
-    .preopen_all(args.dirs)?
-    .preopen_all_map(args.mapdirs)?
-    .run()?;
-
-  Ok(())
+  // Run the default export function in module
+  module.run()
 }
 
 fn get_all_allows(args: &Args) -> Vec<PathAccess> {

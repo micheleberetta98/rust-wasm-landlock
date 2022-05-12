@@ -1,19 +1,20 @@
 use anyhow::Result;
+use std::fs;
 use std::fs::File;
 use wasmtime::*;
 use wasmtime_wasi::{Dir, WasiCtxBuilder};
 
 pub struct WasmModule {
-  path: String,
+  bytes: Vec<u8>,
   ctx_builder: WasiCtxBuilder,
 }
 
 impl WasmModule {
-  pub fn new(path: &str) -> Self {
-    Self {
-      path: path.to_owned(),
+  pub fn new(path: &str) -> Result<Self> {
+    Ok(Self {
+      bytes: fs::read(path)?,
       ctx_builder: WasiCtxBuilder::new(),
-    }
+    })
   }
 
   pub fn use_stdio(mut self) -> Self {
@@ -21,16 +22,16 @@ impl WasmModule {
     self
   }
 
-  pub fn preopen_all(self, dirs: Vec<String>) -> Result<Self> {
+  pub fn preopen_all(self, dirs: &Vec<String>) -> Result<Self> {
     let mapdirs: Vec<_> = dirs
       .iter()
       .map(|d| (d.to_string(), d.to_string()))
       .collect();
 
-    self.preopen_all_map(mapdirs)
+    self.preopen_all_map(&mapdirs)
   }
 
-  pub fn preopen_all_map(mut self, mapdirs: Vec<(String, String)>) -> Result<Self> {
+  pub fn preopen_all_map(mut self, mapdirs: &Vec<(String, String)>) -> Result<Self> {
     for (dir, guest) in mapdirs {
       self = self.preopen(&dir, &guest)?;
     }
@@ -53,7 +54,7 @@ impl WasmModule {
     wasmtime_wasi::add_to_linker(&mut linker, |s| s)?;
 
     let mut store = Store::new(&engine, wasi_ctx);
-    let module = Module::from_file(&engine, &self.path)?;
+    let module = Module::new(&engine, &self.bytes)?;
     linker.module(&mut store, "", &module)?;
     linker
       .get_default(&mut store, "")?
