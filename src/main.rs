@@ -33,6 +33,6 @@ fn get_all_allows(args: &Args) -> Vec<PathAccess> {
   args
     .fs_allows
     .iter()
-    .map(|(p, a)| PathAccess::new(p, *a))
+    .map(|(p, a)| PathAccess::new(p).allow(a))
     .collect()
 }
