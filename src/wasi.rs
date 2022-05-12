@@ -63,4 +63,27 @@ impl WasmModule {
 
     Ok(())
   }
+
+  pub fn invoke<Params, Results>(self, func_name: &str, params: Params) -> Result<Results>
+  where
+    Params: WasmParams,
+    Results: WasmResults,
+  {
+    let wasi_ctx = self.ctx_builder.build();
+    let engine = Engine::default();
+
+    let mut store = Store::new(&engine, wasi_ctx);
+    let module = Module::new(&engine, &self.bytes)?;
+
+    // Here we create the instance with no imports (maybe add wasi to be more like above?)
+    let instance = Instance::new(&mut store, &module, &[])?;
+
+    let func = instance
+      .get_func(&mut store, func_name)
+      .expect(&format!("`{}` was not exported", func_name))
+      .typed::<Params, Results, _>(&store)?;
+
+    let result = func.call(&mut store, params)?;
+    Ok(result)
+  }
 }
