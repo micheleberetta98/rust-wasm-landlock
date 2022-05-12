@@ -12,9 +12,11 @@ mod wasi;
 fn main() -> Result<()> {
   let args = get_args();
 
-  println!("WASM module to run: {}", args.wasm_module);
-  println!("Preopened dirs: {:?}", args.dirs);
-  println!("Mapped dirs:    {:?}", args.mapdirs);
+  if cfg!(debug_assertions) {
+    println!("WASM module to run: {}", args.wasm_module);
+    println!("Preopened dirs: {:?}", args.dirs);
+    println!("Mapped dirs:    {:?}", args.mapdirs);
+  }
 
   // Read before enforcing landlock, otherwise we have to specify read permissions
   // for the executable folder too
