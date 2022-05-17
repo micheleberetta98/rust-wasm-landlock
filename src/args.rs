@@ -9,10 +9,6 @@ pub struct Args {
   // The module to execute
   pub wasm_module: String,
 
-  // The function to execute (will call the default export if not defined)
-  #[clap(long, short, value_name = "FUNC_NAME")]
-  pub invoke: Option<String>,
-
   // The preopepend dir(s) to pass to wasmtime
   #[clap(long = "dir", short, value_name = "DIR")]
   pub dirs: Vec<String>,

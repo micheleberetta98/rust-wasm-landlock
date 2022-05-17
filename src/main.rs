@@ -30,12 +30,7 @@ fn main() -> Result<()> {
     .add_rules(get_all_allows(&args))?
     .enforce()?;
 
-  if let Some(func_name) = args.invoke {
-    println!("{:?}", module.invoke::<(), i32>(&func_name, ())?);
-    Ok(())
-  } else {
-    module.run()
-  }
+  module.run()
 }
 
 fn get_all_allows(args: &Args) -> Vec<PathAccess> {
