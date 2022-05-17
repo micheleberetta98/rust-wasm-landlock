@@ -48,8 +48,14 @@ fn parse_flag_str(s: &str) -> Result<(String, BitFlags<AccessFs>)> {
 
   let mut flags: BitFlags<AccessFs> = BitFlags::EMPTY;
   for s in parts[1].split(',') {
-    let f = parse_flag(s)?;
-    flags = flags | f;
+    let (head, tail) = s.split_at(1);
+    if head == "-" {
+      let f = parse_flag(tail)?;
+      flags &= !f;
+    } else {
+      let f = parse_flag(s)?;
+      flags |= f;
+    }
   }
 
   Ok((path, flags))
@@ -65,8 +71,8 @@ const ACCESS_FS_ROUGHLY_WRITE: BitFlags<AccessFs> = make_bitflags!(AccessFs::{
 fn parse_flag(s: &str) -> Result<BitFlags<AccessFs>> {
   match s {
     "*" => Ok(BitFlags::all()),
-    "~read" => Ok(ACCESS_FS_ROUGHLY_READ),
-    "~write" => Ok(ACCESS_FS_ROUGHLY_WRITE),
+    "read" => Ok(ACCESS_FS_ROUGHLY_READ),
+    "write" => Ok(ACCESS_FS_ROUGHLY_WRITE),
     _ => parse_single_flag(s).map(BitFlags::from),
   }
 }

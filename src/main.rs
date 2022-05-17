@@ -16,6 +16,7 @@ fn main() -> Result<()> {
     println!("WASM module to run: {}", args.wasm_module);
     println!("Preopened dirs:     {:?}", args.dirs);
     println!("Mapped dirs:        {:?}", args.mapdirs);
+    println!("Landlock flags:     {:?}", args.fs_allows);
     println!("Enable landlock:    {:?}", !args.no_landlock);
   }
 
