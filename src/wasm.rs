@@ -22,13 +22,11 @@ impl WasmModule {
     self
   }
 
-  pub fn preopen_all(self, dirs: &Vec<String>) -> Result<Self> {
-    let mapdirs: Vec<_> = dirs
-      .iter()
-      .map(|d| (d.to_string(), d.to_string()))
-      .collect();
-
-    self.preopen_all_map(&mapdirs)
+  pub fn preopen_all(mut self, dirs: &Vec<String>) -> Result<Self> {
+    for dir in dirs {
+      self = self.preopen(&dir, &dir)?;
+    }
+    Ok(self)
   }
 
   pub fn preopen_all_map(mut self, mapdirs: &Vec<(String, String)>) -> Result<Self> {

@@ -17,7 +17,7 @@ impl Landlock {
     Ok(Self { ruleset: ruleset })
   }
 
-  pub fn add_rules(mut self, rules: Vec<PathAccess>) -> Result<Self> {
+  pub fn add_rules(mut self, rules: impl Iterator<Item = PathAccess>) -> Result<Self> {
     for rule in rules {
       self = self.add_rule(rule)?;
     }

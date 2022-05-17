@@ -36,10 +36,9 @@ fn main() -> Result<()> {
   module.run()
 }
 
-fn get_all_allows(args: &Args) -> Vec<PathAccess> {
+fn get_all_allows(args: &Args) -> impl Iterator<Item = PathAccess> + '_ {
   args
     .fs_allows
     .iter()
     .map(|(p, a)| PathAccess::new(p).allow(a))
-    .collect()
 }
