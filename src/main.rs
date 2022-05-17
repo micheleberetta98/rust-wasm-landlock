@@ -14,8 +14,9 @@ fn main() -> Result<()> {
 
   if cfg!(debug_assertions) {
     println!("WASM module to run: {}", args.wasm_module);
-    println!("Preopened dirs: {:?}", args.dirs);
-    println!("Mapped dirs:    {:?}", args.mapdirs);
+    println!("Preopened dirs:     {:?}", args.dirs);
+    println!("Mapped dirs:        {:?}", args.mapdirs);
+    println!("Enable landlock:    {:?}", !args.no_landlock);
   }
 
   // Read before enforcing landlock, otherwise we have to specify read permissions
@@ -26,9 +27,11 @@ fn main() -> Result<()> {
     .preopen_all_map(&args.mapdirs)?;
 
   // Enforce landlock
-  Landlock::new()?
-    .add_rules(get_all_allows(&args))?
-    .enforce()?;
+  if !args.no_landlock {
+    Landlock::new()?
+      .add_rules(get_all_allows(&args))?
+      .enforce()?;
+  }
 
   module.run()
 }

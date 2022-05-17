@@ -20,6 +20,9 @@ pub struct Args {
   // A list of the allowed privileges on a particular folder/file
   #[clap(long = "fs-allow", value_name = "PATH:FLAGS", parse(try_from_str = parse_flag_str))]
   pub fs_allows: Vec<(String, BitFlags<AccessFs>)>,
+
+  #[clap(long = "--no-landlock")]
+  pub no_landlock: bool,
 }
 
 pub fn get_args() -> Args {
