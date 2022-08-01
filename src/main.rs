@@ -3,6 +3,8 @@ use crate::landlock::Landlock;
 use crate::path_access::PathAccess;
 use crate::wasm::WasmModule;
 use anyhow::Result;
+use std::fs;
+use std::io::Write;
 use std::time::Instant;
 
 mod args;
@@ -11,20 +13,31 @@ mod path_access;
 mod wasm;
 
 fn main() -> Result<()> {
+  let filename = std::env::var("FILE").expect("$FILE must be set");
+  let mut file = fs::OpenOptions::new()
+    .write(true)
+    .append(true)
+    .open(filename)
+    .unwrap();
+
+  let len = 5;
+  let mut cumulative = vec![0; len];
+  let mut delta = vec![0; len];
+
   let now = Instant::now();
   let args = get_args();
-  let after_args = now.elapsed();
+  cumulative[0] = now.elapsed().as_micros();
 
   // Read before enforcing landlock, otherwise we have to specify read permissions
   // for the executable folder too
   let mut module = WasmModule::new(&args.wasm_module)?;
-  let after_instance = now.elapsed();
+  cumulative[1] = now.elapsed().as_micros();
 
   module = module
     .use_stdio()
     .preopen_all(&args.dirs)?
     .preopen_all_map(&args.mapdirs)?;
-  let after_preopen = now.elapsed();
+  cumulative[2] = now.elapsed().as_micros();
 
   // Enforce landlock
   if !args.no_landlock {
@@ -32,17 +45,18 @@ fn main() -> Result<()> {
       .add_rules(get_all_allows(&args))?
       .enforce()?;
   }
-  let after_landlock = now.elapsed();
+  cumulative[3] = now.elapsed().as_micros();
 
   let result = module.run();
-  let after_run = now.elapsed();
+  cumulative[4] = now.elapsed().as_micros();
 
-  println!("Times:");
-  println!("  {:?}", after_args);
-  println!("  {:?}", after_instance - after_args);
-  println!("  {:?}", after_preopen - after_instance);
-  println!("  {:?}", after_landlock - after_preopen);
-  println!("  {:?}", after_run - after_landlock);
+  delta[0] = cumulative[0];
+  for i in 1..len {
+    delta[i] = cumulative[i] - cumulative[i - 1];
+  }
+
+  let s = format!("{},{}\n", to_csv_line(delta), to_csv_line(cumulative));
+  file.write_all(s.as_bytes())?;
 
   result
 }
@@ -52,4 +66,11 @@ fn get_all_allows(args: &Args) -> impl Iterator<Item = PathAccess> + '_ {
     .fs_allows
     .iter()
     .map(|(p, a)| PathAccess::new(p).allow(a))
+}
+
+fn to_csv_line<T: std::fmt::Display>(v: Vec<T>) -> String {
+  v.iter()
+    .map(|t| t.to_string())
+    .collect::<Vec<_>>()
+    .join(",")
 }
