@@ -1,11 +1,6 @@
-type,mean,stddev
-Argument parsing,66.6,8.63747999164459
-Module initialization,832.43,94.02441709524719
-Preopen,12.28,4.552898954390366
-Landlock enforcement,18.36,3.9505018221062302
-Running WASM binary,46730.92,9696.514983323554
-Argument parsing (cumulative),66.6,8.63747999164459
-Module initialization (cumulative),899.03,100.80328427790495
-Preopen (cumulative),911.31,105.11155161459791
-Landlock enforcement (cumulative),929.67,108.4956876674103
-Running WASM binary (cumulative),47660.59,9760.41839235585
+type,mean,stddev,meanc,stddevc
+Argument parsing,66.60,8.64,66.60,8.64
+Module initialization,832.43,94.02,899.03,100.80
+Preopen,12.28,4.55,911.31,105.11
+Landlock enforcement,18.36,3.95,929.67,108.50
+Running WASM binary,46730.92,9696.51,47660.59,9760.42
