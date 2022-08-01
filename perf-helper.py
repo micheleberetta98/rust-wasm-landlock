@@ -69,7 +69,7 @@ write_stats(file_medium, stats_medium)
 
 def graphs_for(file, out, out_c):
     df = pd.read_csv(file)
-    xs = list(reversed(df['type']))
+    xs = list(reversed(['A', 'B', 'C', 'D', 'E']))
 
     ys = list(reversed(df['mean']))
     plt.figure()
