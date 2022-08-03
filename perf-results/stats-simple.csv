@@ -1,6 +1,6 @@
 type,mean,stddev,meanc,stddevc
-Argument parsing,56.03,6.05,56.03,6.05
-Module initialization,801.36,51.14,857.39,53.76
-Preopen,5.24,1.15,862.63,54.42
-Landlock enforcement,11.51,2.78,874.14,55.68
-Running WASM binary,37143.50,882.14,38017.64,920.66
+Argument parsing,0.056,0.006,0.056,0.006
+Module initialization,0.801,0.051,0.857,0.054
+Preopen,0.005,0.001,0.863,0.054
+Landlock enforcement,0.012,0.003,0.874,0.056
+Running WASM binary,37.144,0.882,38.018,0.921
