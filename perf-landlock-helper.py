@@ -3,6 +3,7 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 tests = [
     'R,W',
@@ -31,7 +32,7 @@ for test in tests:
     for _ in range(100):
         os.system(f'cargo run -r -- ./wasm-bin/program-complex.wasm --mapdir="tmp-dir:." --fs-allow="tmp-dir:{test}"')
 
-#%% Graphs
+#%% Data
 
 xs = list(range(2, 14))
 means = []
@@ -42,16 +43,22 @@ for x in xs:
     all_times.append(df['landlock'])
     means.append(df['landlock'].mean())
 
+#%% Graphs
+
+b, a = np.polyfit(xs, means, deg=1)
+
 plt.figure()
 plt.plot(xs, means)
+plt.plot(xs, [a + b * x for x in xs])
 plt.xlabel('Number of active permissions')
 plt.ylabel('Time (ns)')
-plt.savefig('perf-results/landlock-impact.png', facecolor='white')
+plt.legend(('Average time', 'Linear Regression line'))
+plt.savefig('perf-results/landlock-impact.png')
 
 plt.figure()
 plt.boxplot(all_times, showfliers=False)
 plt.xlabel('Number of active permissions')
 plt.ylabel('Time (ns)')
-plt.savefig('perf-results/landlock-impact-box.png', facecolor='white')
+plt.savefig('perf-results/landlock-impact-box.png')
 
 # %%
