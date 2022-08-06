@@ -56,7 +56,7 @@ plt.legend(('Average time', 'Linear Regression line'))
 plt.savefig('perf-results/landlock-impact.png')
 
 plt.figure()
-plt.boxplot(all_times, showfliers=False)
+plt.boxplot(all_times, labels=xs, showfliers=False)
 plt.xlabel('Number of active permissions')
 plt.ylabel('Time (ns)')
 plt.savefig('perf-results/landlock-impact-box.png')
