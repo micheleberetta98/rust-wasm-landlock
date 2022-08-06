@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-tests = [
+permissions_tests = [
     'R,W',
     'R,W,X',
     'R,W,X,D',
@@ -20,9 +20,18 @@ tests = [
     '*',
 ]
 
-#%% Tests
+folder_tests = [
+    ['tmp-dir'],
+    ['tmp-dir', 'tmp-dir/subdir1'],
+    ['tmp-dir', 'tmp-dir/subdir1', 'tmp-dir/subdir2'],
+    ['tmp-dir', 'tmp-dir/subdir1', 'tmp-dir/subdir2', 'tmp-dir/subdir3'],
+    ['tmp-dir', 'tmp-dir/subdir1', 'tmp-dir/subdir2', 'tmp-dir/subdir3', 'tmp-dir/subdir4'],
+    ['tmp-dir', 'tmp-dir/subdir1', 'tmp-dir/subdir2', 'tmp-dir/subdir3', 'tmp-dir/subdir4', 'tmp-dir/subdir5'],
+]
 
-for test in tests:
+#%% Permission tests
+
+for test in permissions_tests:
     l = len(test.split(','))
     file = f'perf-results/landlock-impact-{l}.csv'
     os.environ['FILE'] = file
@@ -31,6 +40,25 @@ for test in tests:
 
     for _ in range(100):
         os.system(f'cargo run -r -- ./wasm-bin/program-complex.wasm --mapdir="tmp-dir:." --fs-allow="tmp-dir:{test}"')
+
+#%% Folder tests
+
+for folders in folder_tests:
+    l = len(folders)
+    file = f'perf-results/landlock-impact-folders-{l}.csv'
+    os.environ['FILE'] = file
+    with open(file, 'w') as f:
+        f.write('args_parsing,module_init,preopen,landlock,running,args_parsing_c,module_init_c,preopen_c,landlock_c,running_c\n')
+
+    exe = 'cargo run -r -- ./wasm-bin/program-complex.wasm --mapdir="tmp-dir:.'
+    allows = ''
+    for folder in folders:
+        allows += f'--fs-allow "{folder}:R,W" '
+    allows = allows[:-1]
+    print(f'< {exe} {allows} >')
+    # for _ in range(1):
+    #     os.system(f'{exe} {allows}')
+
 
 #%% Data
 
