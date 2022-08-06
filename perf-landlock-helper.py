@@ -59,7 +59,7 @@ for folders in folder_tests:
         os.system(f'{exe} {allows}')
 
 
-#%% Data
+#%% Permission graphs
 
 xs = list(range(2, 14))
 means = []
@@ -70,13 +70,11 @@ for x in xs:
     all_times.append(df['landlock'])
     means.append(df['landlock'].mean())
 
-#%% Graphs
-
 b, a = np.polyfit(xs, means, deg=1)
 
 plt.figure()
-plt.plot(xs, means)
-plt.plot(xs, [a + b * x for x in xs])
+plt.scatter(xs, means)
+plt.plot(xs, [a + b * x for x in xs], color='C1')
 plt.xlabel('Number of active permissions')
 plt.ylabel('Time (ns)')
 plt.legend(('Average time', 'Linear Regression line'))
@@ -87,5 +85,31 @@ plt.boxplot(all_times, labels=xs, showfliers=False)
 plt.xlabel('Number of active permissions')
 plt.ylabel('Time (ns)')
 plt.savefig('perf-results/landlock-impact-box.png')
+
+#%% Folder graphs
+
+xs = list(range(len(folder_tests[0]), len(folder_tests[-1]) + 1))
+means = []
+all_times = []
+for x in xs:
+    df = pd.read_csv(f'perf-results/landlock-impact-folders-{x}.csv')
+    all_times.append(df['landlock'])
+    means.append(df['landlock'].mean())
+
+b, a = np.polyfit(xs, means, deg=1)
+
+plt.figure()
+plt.scatter(xs, means)
+plt.plot(xs, [a + b * x for x in xs], color='C1')
+plt.xlabel('Number of folders considered')
+plt.ylabel('Time (ns)')
+plt.legend(('Average time', 'Linear Regression line'))
+plt.savefig('perf-results/landlock-impact-folders.png')
+
+plt.figure()
+plt.boxplot(all_times, labels=xs, showfliers=False)
+plt.xlabel('Number of folders considered')
+plt.ylabel('Time (ns)')
+plt.savefig('perf-results/landlock-impact-folders-box.png')
 
 # %%
