@@ -55,9 +55,8 @@ for folders in folder_tests:
     for folder in folders:
         allows += f'--fs-allow "{folder}:R,W" '
     allows = allows[:-1]
-    print(f'< {exe} {allows} >')
-    # for _ in range(1):
-    #     os.system(f'{exe} {allows}')
+    for _ in range(100):
+        os.system(f'{exe} {allows}')
 
 
 #%% Data
