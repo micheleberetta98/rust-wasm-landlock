@@ -1,0 +1,8 @@
+name: policy-d2
+cmd: ./target/release/rust-wasm-landlock ./wasm-bin/program-complex-2.wasm --mapdir tmp-dir:. --no-landlock
+
+allow:
+- dev: terminal
+- fs: {pathname: ./target/release, access: rxm}
+- fs: {pathname: ./tmp-dir/subdir, access: rw}
+- fs: {pathname: ./tmp-dir/subdir1, access: rw}
