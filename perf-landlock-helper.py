@@ -31,32 +31,32 @@ folder_tests = [
 
 #%% Permission tests
 
-for test in permissions_tests:
-    l = len(test.split(','))
-    file = f'perf-results/landlock-impact-{l}.csv'
-    os.environ['FILE'] = file
-    with open(file, 'w') as f:
-        f.write('args_parsing,module_init,preopen,landlock,running,args_parsing_c,module_init_c,preopen_c,landlock_c,running_c\n')
+# for test in permissions_tests:
+#     l = len(test.split(','))
+#     file = f'perf-results/landlock-impact-{l}.csv'
+#     os.environ['FILE'] = file
+#     with open(file, 'w') as f:
+#         f.write('args_parsing,module_init,preopen,landlock,running,args_parsing_c,module_init_c,preopen_c,landlock_c,running_c\n')
 
-    for _ in range(100):
-        os.system(f'cargo run -r -- ./wasm-bin/program-complex.wasm --mapdir="tmp-dir:." --fs-allow="tmp-dir:{test}"')
+#     for _ in range(100):
+#         os.system(f'cargo run -r -- ./wasm-bin/program-complex.wasm --mapdir="tmp-dir:." --fs-allow="tmp-dir:{test}"')
 
-#%% Folder tests
+# #%% Folder tests
 
-for folders in folder_tests:
-    l = len(folders)
-    file = f'perf-results/landlock-impact-folders-{l}.csv'
-    os.environ['FILE'] = file
-    with open(file, 'w') as f:
-        f.write('args_parsing,module_init,preopen,landlock,running,args_parsing_c,module_init_c,preopen_c,landlock_c,running_c\n')
+# for folders in folder_tests:
+#     l = len(folders)
+#     file = f'perf-results/landlock-impact-folders-{l}.csv'
+#     os.environ['FILE'] = file
+#     with open(file, 'w') as f:
+#         f.write('args_parsing,module_init,preopen,landlock,running,args_parsing_c,module_init_c,preopen_c,landlock_c,running_c\n')
 
-    exe = 'cargo run -r -- ./wasm-bin/program-complex.wasm --mapdir="tmp-dir:.'
-    allows = ''
-    for folder in folders:
-        allows += f'--fs-allow "{folder}:R,W" '
-    allows = allows[:-1]
-    for _ in range(100):
-        os.system(f'{exe} {allows}')
+#     exe = 'cargo run -r -- ./wasm-bin/program-complex.wasm --mapdir="tmp-dir:.'
+#     allows = ''
+#     for folder in folders:
+#         allows += f'--fs-allow "{folder}:R,W" '
+#     allows = allows[:-1]
+#     for _ in range(100):
+#         os.system(f'{exe} {allows}')
 
 
 #%% Permission graphs
@@ -76,14 +76,14 @@ plt.figure()
 plt.scatter(xs, means)
 plt.plot(xs, [a + b * x for x in xs], color='C1')
 plt.xlabel('Number of active permissions')
-plt.ylabel('Time (ns)')
+plt.ylabel('Time (µs)')
 plt.legend(('Average time', 'Linear Regression line'))
 plt.savefig('perf-results/landlock-impact.png')
 
 plt.figure()
 plt.boxplot(all_times, labels=xs, showfliers=False)
 plt.xlabel('Number of active permissions')
-plt.ylabel('Time (ns)')
+plt.ylabel('Time (µs)')
 plt.savefig('perf-results/landlock-impact-box.png')
 
 #%% Folder graphs
@@ -102,14 +102,14 @@ plt.figure()
 plt.scatter(xs, means)
 plt.plot(xs, [a + b * x for x in xs], color='C1')
 plt.xlabel('Number of rules considered')
-plt.ylabel('Time (ns)')
+plt.ylabel('Time (µs)')
 plt.legend(('Average time', 'Linear Regression line'))
 plt.savefig('perf-results/landlock-impact-folders.png')
 
 plt.figure()
 plt.boxplot(all_times, labels=xs, showfliers=False)
 plt.xlabel('Number of rules considered')
-plt.ylabel('Time (ns)')
+plt.ylabel('Time (µs)')
 plt.savefig('perf-results/landlock-impact-folders-box.png')
 
 # %%
