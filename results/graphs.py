@@ -16,6 +16,7 @@ for x in xs:
 b, a = np.polyfit(xs, means, deg=1)
 
 plt.figure()
+plt.ylim(10, 20)
 plt.scatter(xs, means)
 plt.plot(xs, [a + b * x for x in xs], color='C1')
 plt.xlabel('Number of active permissions')
@@ -42,6 +43,7 @@ for x in xs:
 b, a = np.polyfit(xs, means, deg=1)
 
 plt.figure()
+plt.ylim(10, 20)
 plt.scatter(xs, means)
 plt.plot(xs, [a + b * x for x in xs], color='C1')
 plt.xlabel('Number of folders considered')
