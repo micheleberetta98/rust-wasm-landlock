@@ -73,7 +73,8 @@ for x in xs:
 b, a = np.polyfit(xs, means, deg=1)
 
 plt.figure()
-plt.scatter(xs, means)
+plt.ylim(10, 30)
+plt.scatter(xs, means, )
 plt.plot(xs, [a + b * x for x in xs], color='C1')
 plt.xlabel('Number of active permissions')
 plt.ylabel('Time (µs)')
