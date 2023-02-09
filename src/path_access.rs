@@ -37,7 +37,7 @@ impl PathAccess {
 
   fn to_path_beneath(&self) -> Result<PathBeneath<PathFd>, PathEnvError> {
     let path_fd = PathFd::new(&self.path)?;
-    let path_beneath = PathBeneath::new(path_fd).allow_access(self.access);
+    let path_beneath = PathBeneath::new(path_fd, self.access);
     Ok(path_beneath)
   }
 }

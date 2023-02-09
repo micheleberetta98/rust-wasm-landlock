@@ -1,7 +1,8 @@
 use crate::path_access::PathAccess;
 use anyhow::{bail, Result};
 use landlock::{
-  Access, AccessFs, RestrictionStatus, Ruleset, RulesetCreated, RulesetError, RulesetStatus, ABI,
+  Access, AccessFs, RestrictionStatus, Ruleset, RulesetAttr, RulesetCreated, RulesetCreatedAttr,
+  RulesetError, RulesetStatus, ABI,
 };
 
 pub struct Landlock {

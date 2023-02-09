@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-landlock = { git = "https://github.com/landlock-lsm/rust-landlock" }
+landlock = "0.2.0"
 anyhow = "1.0"
 clap = { version = "3.1.15", features = ["derive"] }
 thiserror = "1.0"
