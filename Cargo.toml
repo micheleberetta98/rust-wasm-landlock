@@ -10,5 +10,5 @@ landlock = "0.2.0"
 anyhow = "1.0"
 clap = { version = "3.1.15", features = ["derive"] }
 thiserror = "1.0"
-wasmtime = "5.0.0"
-wasmtime-wasi = "5.0.0"
+wasmtime = "5.0.1"
+wasmtime-wasi = "5.0.1"
